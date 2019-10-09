@@ -102,9 +102,9 @@ impl Cube {
         Cube::Swap_Unit_Colors(&mut self.front.bot_right, &mut self.top.bot_right);
 
         //Swap front left rows with back right rows
-        Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.back.top_left);
+        Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.back.bot_left);
         Cube::Swap_Unit_Colors(&mut self.front.mid_right, &mut self.back.mid_left);
-        Cube::Swap_Unit_Colors(&mut self.front.bot_right, &mut self.back.bot_left);
+        Cube::Swap_Unit_Colors(&mut self.front.bot_right, &mut self.back.top_left);
 
         //Swap front left rows with bottom left rows
         Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.bottom.top_right);
@@ -153,7 +153,20 @@ impl Cube {
     }
 
     pub fn Face_Clockwise(&mut self){
+        //Swap front bottom with left bottom
+        Cube::Swap_Unit_Colors(&mut self.left.top_right, &mut self.top.bot_right);
+        Cube::Swap_Unit_Colors(&mut self.left.mid_right, &mut self.top.bot_middle);
+        Cube::Swap_Unit_Colors(&mut self.left.bot_right, &mut self.top.bot_left);
 
+        //Swap front top tows with the back top rows
+        Cube::Swap_Unit_Colors(&mut self.left.top_right , &mut self.right.top_left);
+        Cube::Swap_Unit_Colors(&mut self.left.mid_right, &mut self.right.mid_left);
+        Cube::Swap_Unit_Colors(&mut self.left.bot_right, &mut self.right.bot_left);
+
+        //Swap front top rows with the left top rows
+        Cube::Swap_Unit_Colors(&mut self.left.top_right , &mut self.bottom.bot_left);
+        Cube::Swap_Unit_Colors(&mut self.left.mid_right, &mut self.left.bot_middle);
+        Cube::Swap_Unit_Colors(&mut self.left.bot_right, &mut self.left.bot_right);
     }
 
     pub fn Back_Clockwise(&mut self){
