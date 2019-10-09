@@ -165,8 +165,8 @@ impl Cube {
 
         //Swap front top rows with the left top rows
         Cube::Swap_Unit_Colors(&mut self.left.top_right , &mut self.bottom.bot_left);
-        Cube::Swap_Unit_Colors(&mut self.left.mid_right, &mut self.left.bot_middle);
-        Cube::Swap_Unit_Colors(&mut self.left.bot_right, &mut self.left.bot_right);
+        Cube::Swap_Unit_Colors(&mut self.left.mid_right, &mut self.bottom.bot_middle);
+        Cube::Swap_Unit_Colors(&mut self.left.bot_right, &mut self.bottom.bot_right);
     }
 
     pub fn Back_Clockwise(&mut self){
