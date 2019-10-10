@@ -193,8 +193,13 @@ impl Cube {
         Cube::Swap_Unit_Colors(&mut self.front.bot_middle, &mut self.bottom.bot_middle);
     }
 
-    pub fn Clockwise_Turn(&mut self){
-        //TODO: Implement this
+    pub fn Clockwise_Turn(side : &mut Side){
+        Cube::Swap_Unit_Colors(&mut side.top_left, &mut side.bot_left);
+        Cube::Swap_Unit_Colors(&mut side.top_right, &mut side.bot_left);
+        Cube::Swap_Unit_Colors(&mut side.top_middle, &mut side.mid_left);
+        Cube::Swap_Unit_Colors(&mut side.mid_left, &mut side.mid_right);
+        Cube::Swap_Unit_Colors(&mut side.mid_left, &mut side.bot_middle);
+        Cube::Swap_Unit_Colors(&mut side.bot_left, &mut side.bot_right);
     }
 
     pub fn Counterclockwise_Turn(side : &mut Side){
@@ -268,17 +273,6 @@ mod Tests{
         test_cube.bottom.mid_left = 11;
         test_cube.bottom.bot_left = 12;
 
-        /*Set up clear markers for the transformation*/
-        test_cube.left.top_left = 1;
-        test_cube.left.top_middle = 2;
-        test_cube.left.top_right = 3;
-        test_cube.left.mid_left = 4;
-        test_cube.left.mid_middle = 5;
-        test_cube.left.mid_right = 6;
-        test_cube.left.bot_left = 7;
-        test_cube.left.bot_middle = 8;
-        test_cube.left.bot_right = 9;
-
         test_cube.Left_Counterclockwise();
         /*In this test, we need to make sure all of the faces
         have the correct values*/
@@ -299,6 +293,24 @@ mod Tests{
         assert_eq!(test_cube.bottom.top_left, 9);
         assert_eq!(test_cube.bottom.mid_left, 8);
         assert_eq!(test_cube.bottom.bot_left, 7);
+    }
+
+    #[test]
+    fn counterclockwise_turn(){
+        let mut test_cube = Cube::New();
+
+        /*Set up clear markers for the transformation*/
+        test_cube.left.top_left = 1;
+        test_cube.left.top_middle = 2;
+        test_cube.left.top_right = 3;
+        test_cube.left.mid_left = 4;
+        test_cube.left.mid_middle = 5;
+        test_cube.left.mid_right = 6;
+        test_cube.left.bot_left = 7;
+        test_cube.left.bot_middle = 8;
+        test_cube.left.bot_right = 9;
+
+        Cube::Counterclockwise_Turn(&mut test_cube.left);
 
         /*Next we need to ensure the clockwise/counterclockwise transform works*/
         assert_eq!(test_cube.left.top_left, 3);
