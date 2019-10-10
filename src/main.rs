@@ -1,4 +1,5 @@
 use std::borrow::Borrow;
+use std::arch;
 
 fn main() {
     let mut cube = Cube::New();
@@ -76,6 +77,7 @@ impl Cube {
         }
     }
 
+    /*Implementation Completed*/
     pub fn Left_Counterclockwise(&mut self){
         //Swap front left rows with top left rows
         Cube::Swap_Unit_Colors(&mut self.front.top_left, &mut self.top.top_left);
@@ -83,9 +85,9 @@ impl Cube {
         Cube::Swap_Unit_Colors(&mut self.front.bot_left, &mut self.top.bot_left);
 
         //Swap front left rows with back right rows
-        Cube::Swap_Unit_Colors(&mut self.front.top_left, &mut self.back.top_right);
+        Cube::Swap_Unit_Colors(&mut self.front.top_left, &mut self.back.bot_right);
         Cube::Swap_Unit_Colors(&mut self.front.mid_left, &mut self.back.mid_right);
-        Cube::Swap_Unit_Colors(&mut self.front.bot_left, &mut self.back.bot_right);
+        Cube::Swap_Unit_Colors(&mut self.front.bot_left, &mut self.back.top_right);
 
         //Swap front left rows with bottom left rows
         Cube::Swap_Unit_Colors(&mut self.front.top_left, &mut self.bottom.top_left);
@@ -93,6 +95,7 @@ impl Cube {
         Cube::Swap_Unit_Colors(&mut self.front.bot_left, &mut self.bottom.bot_left);
 
         //TODO:Perform counter clockwise turn on left side
+        Cube::Counterclockwise_Turn(&mut self.left);
     }
 
     pub fn Right_Clockwise(&mut self){
@@ -115,17 +118,17 @@ impl Cube {
     }
 
     pub fn Top_Clockwise(&mut self){
-        //Swap front top rows with the left top rows
-        Cube::Swap_Unit_Colors(&mut self.front.top_left, &mut self.right.top_left);
-        Cube::Swap_Unit_Colors(&mut self.front.top_middle, &mut self.right.top_middle);
-        Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.right.top_right);
+        //Swap top row of front with the top row of the left
+        Cube::Swap_Unit_Colors(&mut self.front.top_left, &mut self.left.top_left);
+        Cube::Swap_Unit_Colors(&mut self.front.top_middle, &mut self.left.top_middle);
+        Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.left.top_right);
 
         //Swap front top tows with the back top rows
         Cube::Swap_Unit_Colors(&mut self.front.top_left , &mut self.back.top_left);
         Cube::Swap_Unit_Colors(&mut self.front.top_middle, &mut self.back.top_middle);
         Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.back.top_right);
 
-        //Swap front top rows with the left top rows
+        //Swap front top rows with the right top rows
         Cube::Swap_Unit_Colors(&mut self.front.top_left , &mut self.left.top_left);
         Cube::Swap_Unit_Colors(&mut self.front.top_middle, &mut self.left.top_middle);
         Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.left.top_right);
@@ -194,8 +197,13 @@ impl Cube {
         //TODO: Implement this
     }
 
-    pub fn Counterclockwise_Turn(&mut self){
-        //TODO: Don't be lazy, actually implement this move rather than doing 3 clockwise turns
+    pub fn Counterclockwise_Turn(side : &mut Side){
+        Cube::Swap_Unit_Colors(&mut side.top_left, &mut side.top_right);
+        Cube::Swap_Unit_Colors(&mut side.top_right, &mut side.bot_right);
+        Cube::Swap_Unit_Colors(&mut side.top_middle, &mut side.mid_right);
+        Cube::Swap_Unit_Colors(&mut side.mid_left, &mut side.mid_right);
+        Cube::Swap_Unit_Colors(&mut side.mid_right, &mut side.bot_middle);
+        Cube::Swap_Unit_Colors(&mut side.bot_left, &mut side.bot_right);
     }
 
     pub fn Write_Cube_Side(Target_Side: &Side){
@@ -230,4 +238,77 @@ pub enum colors {
     green,
     orange,
     purple
+}
+
+/*
+Tests to ensure all moves are working correctly
+*/
+
+#[cfg(test)]
+mod Tests{
+    use crate::Cube;
+
+    #[test]
+    fn left_counterclockwise(){
+        let mut test_cube = Cube::New();
+        /*We need to manually set some values so that our tests are valid*/
+        test_cube.front.top_left = 1;
+        test_cube.front.mid_left = 2;
+        test_cube.front.bot_left = 3;
+
+        test_cube.top.top_left = 4;
+        test_cube.top.mid_left = 5;
+        test_cube.top.bot_left = 6;
+
+        test_cube.back.top_right = 7;
+        test_cube.back.mid_right = 8;
+        test_cube.back.bot_right = 9;
+
+        test_cube.bottom.top_left = 10;
+        test_cube.bottom.mid_left = 11;
+        test_cube.bottom.bot_left = 12;
+
+        /*Set up clear markers for the transformation*/
+        test_cube.left.top_left = 1;
+        test_cube.left.top_middle = 2;
+        test_cube.left.top_right = 3;
+        test_cube.left.mid_left = 4;
+        test_cube.left.mid_middle = 5;
+        test_cube.left.mid_right = 6;
+        test_cube.left.bot_left = 7;
+        test_cube.left.bot_middle = 8;
+        test_cube.left.bot_right = 9;
+
+        test_cube.Left_Counterclockwise();
+        /*In this test, we need to make sure all of the faces
+        have the correct values*/
+
+        /*First we need to test that the 4 impacted sides*/
+        assert_eq!(test_cube.front.top_left, 10);
+        assert_eq!(test_cube.front.mid_left, 11);
+        assert_eq!(test_cube.front.bot_left, 12);
+
+        assert_eq!(test_cube.top.top_left, 1);
+        assert_eq!(test_cube.top.mid_left, 2);
+        assert_eq!(test_cube.top.bot_left, 3);
+
+        assert_eq!(test_cube.back.top_right, 6);
+        assert_eq!(test_cube.back.mid_right, 5);
+        assert_eq!(test_cube.back.bot_right, 4);
+
+        assert_eq!(test_cube.bottom.top_left, 9);
+        assert_eq!(test_cube.bottom.mid_left, 8);
+        assert_eq!(test_cube.bottom.bot_left, 7);
+
+        /*Next we need to ensure the clockwise/counterclockwise transform works*/
+        assert_eq!(test_cube.left.top_left, 3);
+        assert_eq!(test_cube.left.top_middle, 6);
+        assert_eq!(test_cube.left.top_right, 9);
+        assert_eq!(test_cube.left.mid_left, 2);
+        assert_eq!(test_cube.left.mid_middle, 5);
+        assert_eq!(test_cube.left.mid_right, 8);
+        assert_eq!(test_cube.left.bot_left, 1);
+        assert_eq!(test_cube.left.bot_middle, 4);
+        assert_eq!(test_cube.left.bot_right, 7);
+    }
 }
