@@ -1,3 +1,5 @@
+#![feature(test)]
+
 use std::borrow::Borrow;
 use std::arch;
 
@@ -251,7 +253,9 @@ Tests to ensure all moves are working correctly
 
 #[cfg(test)]
 mod Tests{
+    extern crate test;
     use crate::Cube;
+    use test::Bencher;
 
     #[test]
     fn left_counterclockwise(){
@@ -295,6 +299,17 @@ mod Tests{
         assert_eq!(test_cube.bottom.bot_left, 7);
     }
 
+    #[bench]
+    fn bench_left_counterclockwise(bnchr: &mut Bencher){
+        let mut test_cube = Cube::New();
+        bnchr.iter(|| {
+           //Run 1 million loops
+            for i in 1..1000000 {
+                test_cube.Left_Counterclockwise();
+            }
+        });
+    }
+
     #[test]
     fn counterclockwise_turn(){
         let mut test_cube = Cube::New();
@@ -322,5 +337,16 @@ mod Tests{
         assert_eq!(test_cube.left.bot_left, 1);
         assert_eq!(test_cube.left.bot_middle, 4);
         assert_eq!(test_cube.left.bot_right, 7);
+    }
+
+    #[bench]
+    fn bench_counterclockwise_turn(bnchr: &mut Bencher){
+        let mut test_cube = Cube::New();
+        bnchr.iter(|| {
+            //Run 1 million loops
+            for i in 1..1000000 {
+                Cube::Counterclockwise_Turn(&mut test_cube.left);
+            }
+        });
     }
 }
