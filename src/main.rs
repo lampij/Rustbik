@@ -5,29 +5,6 @@ use std::arch;
 
 fn main() {
     let mut cube = Cube::New();
-    println!("Front");
-    Cube::Write_Cube_Side(&cube.front);
-    println!("Top");
-    Cube::Write_Cube_Side(&cube.top);
-    println!("Back");
-    Cube::Write_Cube_Side(&cube.back);
-    println!("Bottom");
-    Cube::Write_Cube_Side(&cube.bottom);
-
-    //Do some moves
-    cube.Left_Counterclockwise();
-    cube.Right_Clockwise();
-    cube.Center_Upward_Twist();
-
-
-    println!("Front");
-    Cube::Write_Cube_Side(&cube.front);
-    println!("Top");
-    Cube::Write_Cube_Side(&cube.top);
-    println!("Back");
-    Cube::Write_Cube_Side(&cube.back);
-    println!("Bottom");
-    Cube::Write_Cube_Side(&cube.bottom);
 }
 
 pub struct Side {
@@ -117,6 +94,7 @@ impl Cube {
         Cube::Swap_Unit_Colors(&mut self.front.bot_right, &mut self.bottom.bot_right);
 
         //TODO: Perform clockwise turn on right side
+        Cube::Clockwise_Turn(&mut self.right);
     }
 
     pub fn Top_Clockwise(&mut self){
@@ -258,60 +236,6 @@ mod Tests{
     use crate::Cube;
     use test::Bencher;
 
-    //left counterclockwise tests
-    #[test]
-    fn left_counterclockwise(){
-        let mut test_cube = Cube::New();
-        /*We need to manually set some values so that our tests are valid*/
-        test_cube.front.top_left = 1;
-        test_cube.front.mid_left = 2;
-        test_cube.front.bot_left = 3;
-
-        test_cube.top.top_left = 4;
-        test_cube.top.mid_left = 5;
-        test_cube.top.bot_left = 6;
-
-        test_cube.back.top_right = 7;
-        test_cube.back.mid_right = 8;
-        test_cube.back.bot_right = 9;
-
-        test_cube.bottom.top_left = 10;
-        test_cube.bottom.mid_left = 11;
-        test_cube.bottom.bot_left = 12;
-
-        test_cube.Left_Counterclockwise();
-        /*In this test, we need to make sure all of the faces
-        have the correct values*/
-
-        /*First we need to test that the 4 impacted sides*/
-        assert_eq!(test_cube.front.top_left, 10);
-        assert_eq!(test_cube.front.mid_left, 11);
-        assert_eq!(test_cube.front.bot_left, 12);
-
-        assert_eq!(test_cube.top.top_left, 1);
-        assert_eq!(test_cube.top.mid_left, 2);
-        assert_eq!(test_cube.top.bot_left, 3);
-
-        assert_eq!(test_cube.back.top_right, 6);
-        assert_eq!(test_cube.back.mid_right, 5);
-        assert_eq!(test_cube.back.bot_right, 4);
-
-        assert_eq!(test_cube.bottom.top_left, 9);
-        assert_eq!(test_cube.bottom.mid_left, 8);
-        assert_eq!(test_cube.bottom.bot_left, 7);
-    }
-
-    #[bench]
-    fn bench_left_counterclockwise(bnchr: &mut Bencher){
-        let mut test_cube = Cube::New();
-        bnchr.iter(|| {
-           //Run 1 million loops
-            for i in 1..1000000 {
-                test_cube.Left_Counterclockwise();
-            }
-        });
-    }
-
     //counterclockwise turn tests
     #[test]
     fn counterclockwise_turn(){
@@ -444,6 +368,114 @@ mod Tests{
             //Run 1 million loops
             for i in 1..1000000 {
                 test_cube.Top_Clockwise()
+            }
+        });
+    }
+
+    //left counterclockwise tests
+    #[test]
+    fn left_counterclockwise(){
+        let mut test_cube = Cube::New();
+        /*We need to manually set some values so that our tests are valid*/
+        test_cube.front.top_left = 1;
+        test_cube.front.mid_left = 2;
+        test_cube.front.bot_left = 3;
+
+        test_cube.top.top_left = 4;
+        test_cube.top.mid_left = 5;
+        test_cube.top.bot_left = 6;
+
+        test_cube.back.top_right = 7;
+        test_cube.back.mid_right = 8;
+        test_cube.back.bot_right = 9;
+
+        test_cube.bottom.top_left = 10;
+        test_cube.bottom.mid_left = 11;
+        test_cube.bottom.bot_left = 12;
+
+        test_cube.Left_Counterclockwise();
+        /*In this test, we need to make sure all of the faces
+        have the correct values*/
+
+        /*First we need to test that the 4 impacted sides*/
+        assert_eq!(test_cube.front.top_left, 10);
+        assert_eq!(test_cube.front.mid_left, 11);
+        assert_eq!(test_cube.front.bot_left, 12);
+
+        assert_eq!(test_cube.top.top_left, 1);
+        assert_eq!(test_cube.top.mid_left, 2);
+        assert_eq!(test_cube.top.bot_left, 3);
+
+        assert_eq!(test_cube.back.top_right, 6);
+        assert_eq!(test_cube.back.mid_right, 5);
+        assert_eq!(test_cube.back.bot_right, 4);
+
+        assert_eq!(test_cube.bottom.top_left, 9);
+        assert_eq!(test_cube.bottom.mid_left, 8);
+        assert_eq!(test_cube.bottom.bot_left, 7);
+    }
+
+    #[bench]
+    fn bench_left_counterclockwise(bnchr: &mut Bencher){
+        let mut test_cube = Cube::New();
+        bnchr.iter(|| {
+            //Run 1 million loops
+            for i in 1..1000000 {
+                test_cube.Left_Counterclockwise();
+            }
+        });
+    }
+
+    //left counterclockwise tests
+    #[test]
+    fn right_clockwise(){
+        let mut test_cube = Cube::New();
+        /*We need to manually set some values so that our tests are valid*/
+        test_cube.front.top_right = 1;
+        test_cube.front.mid_right = 2;
+        test_cube.front.bot_right = 3;
+
+        test_cube.top.top_right = 4;
+        test_cube.top.mid_right = 5;
+        test_cube.top.bot_right = 6;
+
+        test_cube.back.top_left = 7;
+        test_cube.back.mid_left = 8;
+        test_cube.back.bot_left = 9;
+
+        test_cube.bottom.top_right = 10;
+        test_cube.bottom.mid_right = 11;
+        test_cube.bottom.bot_right = 12;
+
+        test_cube.Right_Clockwise();
+        /*In this test, we need to make sure all of the faces
+        have the correct values*/
+
+        /*First we need to test that the 4 impacted sides*/
+        assert_eq!(test_cube.front.top_right, 10);
+        assert_eq!(test_cube.front.mid_right, 11);
+        assert_eq!(test_cube.front.bot_right, 12);
+
+        assert_eq!(test_cube.top.top_right, 1);
+        assert_eq!(test_cube.top.mid_right, 2);
+        assert_eq!(test_cube.top.bot_right, 3);
+
+        assert_eq!(test_cube.back.top_left, 6);
+        assert_eq!(test_cube.back.mid_left, 5);
+        assert_eq!(test_cube.back.bot_left, 4);
+
+        assert_eq!(test_cube.bottom.top_right, 9);
+        assert_eq!(test_cube.bottom.mid_right, 8);
+        assert_eq!(test_cube.bottom.bot_right, 7);
+    }
+
+    #[bench]
+    fn bench_right_clockwise(bnchr: &mut Bencher){
+        let mut test_cube = Cube::New();
+        bnchr.iter(|| {
+            //Run 1 million loops
+            for i in 1..1000000 {
+                test_cube.Right_Clockwise();
             }
         });
     }
