@@ -257,6 +257,7 @@ mod Tests{
     use crate::Cube;
     use test::Bencher;
 
+    //left counterclockwise tests
     #[test]
     fn left_counterclockwise(){
         let mut test_cube = Cube::New();
@@ -310,6 +311,7 @@ mod Tests{
         });
     }
 
+    //counterclockwise turn tests
     #[test]
     fn counterclockwise_turn(){
         let mut test_cube = Cube::New();
@@ -346,6 +348,47 @@ mod Tests{
             //Run 1 million loops
             for i in 1..1000000 {
                 Cube::Counterclockwise_Turn(&mut test_cube.left);
+            }
+        });
+    }
+
+    //clockwise turn tests
+    #[test]
+    fn clockwise_turn(){
+        let mut test_cube = Cube::New();
+
+        /*Set up clear markers for the transformation*/
+        test_cube.left.top_left = 1;
+        test_cube.left.top_middle = 2;
+        test_cube.left.top_right = 3;
+        test_cube.left.mid_left = 4;
+        test_cube.left.mid_middle = 5;
+        test_cube.left.mid_right = 6;
+        test_cube.left.bot_left = 7;
+        test_cube.left.bot_middle = 8;
+        test_cube.left.bot_right = 9;
+
+        Cube::Clockwise_Turn(&mut test_cube.left);
+
+        /*Next we need to ensure the clockwise/counterclockwise transform works*/
+        assert_eq!(test_cube.left.top_left, 7);
+        assert_eq!(test_cube.left.top_middle, 4);
+        assert_eq!(test_cube.left.top_right, 1);
+        assert_eq!(test_cube.left.mid_left, 8);
+        assert_eq!(test_cube.left.mid_middle, 5);
+        assert_eq!(test_cube.left.mid_right, 2);
+        assert_eq!(test_cube.left.bot_left, 9);
+        assert_eq!(test_cube.left.bot_middle, 6);
+        assert_eq!(test_cube.left.bot_right, 3);
+    }
+
+    #[bench]
+    fn bench_clockwise_turn(bnchr: &mut Bencher){
+        let mut test_cube = Cube::New();
+        bnchr.iter(|| {
+            //Run 1 million loops
+            for i in 1..1000000 {
+                Cube::Clockwise_Turn(&mut test_cube.left);
             }
         });
     }
