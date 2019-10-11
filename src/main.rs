@@ -121,21 +121,22 @@ impl Cube {
 
     pub fn Top_Clockwise(&mut self){
         //Swap top row of front with the top row of the left
-        Cube::Swap_Unit_Colors(&mut self.front.top_left, &mut self.left.top_left);
-        Cube::Swap_Unit_Colors(&mut self.front.top_middle, &mut self.left.top_middle);
-        Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.left.top_right);
+        Cube::Swap_Unit_Colors(&mut self.front.top_left, &mut self.right.top_left);
+        Cube::Swap_Unit_Colors(&mut self.front.top_middle, &mut self.right.top_middle);
+        Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.right.top_right);
 
         //Swap front top tows with the back top rows
-        Cube::Swap_Unit_Colors(&mut self.front.top_left , &mut self.back.top_left);
-        Cube::Swap_Unit_Colors(&mut self.front.top_middle, &mut self.back.top_middle);
-        Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.back.top_right);
+        Cube::Swap_Unit_Colors(&mut self.right.top_left , &mut self.left.top_left);
+        Cube::Swap_Unit_Colors(&mut self.right.top_middle, &mut self.left.top_middle);
+        Cube::Swap_Unit_Colors(&mut self.right.top_right, &mut self.left.top_right);
 
         //Swap front top rows with the right top rows
-        Cube::Swap_Unit_Colors(&mut self.front.top_left , &mut self.left.top_left);
-        Cube::Swap_Unit_Colors(&mut self.front.top_middle, &mut self.left.top_middle);
-        Cube::Swap_Unit_Colors(&mut self.front.top_right, &mut self.left.top_right);
+        Cube::Swap_Unit_Colors(&mut self.right.top_left , &mut self.back.top_left);
+        Cube::Swap_Unit_Colors(&mut self.right.top_middle, &mut self.back.top_middle);
+        Cube::Swap_Unit_Colors(&mut self.right.top_right, &mut self.back.top_right);
 
-        //TODO: Perform clockwise turn on top side
+        //TODO:Perform counter clockwise turn on left side
+        Cube::Clockwise_Turn(&mut self.top);
     }
 
     pub fn Bottom_Clockwise(&mut self){
@@ -389,6 +390,60 @@ mod Tests{
             //Run 1 million loops
             for i in 1..1000000 {
                 Cube::Clockwise_Turn(&mut test_cube.left);
+            }
+        });
+    }
+
+    //top clockwise turn tests
+    #[test]
+    fn top_clockwise_turn(){
+        let mut test_cube = Cube::New();
+        /*We need to manually set some values so that our tests are valid*/
+        test_cube.front.top_left = 1;
+        test_cube.front.top_middle = 2;
+        test_cube.front.top_right = 3;
+
+        test_cube.right.top_left = 4;
+        test_cube.right.top_middle = 5;
+        test_cube.right.top_right = 6;
+
+        test_cube.back.top_left = 7;
+        test_cube.back.top_middle = 8;
+        test_cube.back.top_right = 9;
+
+        test_cube.left.top_left = 10;
+        test_cube.left.top_middle = 11;
+        test_cube.left.top_right = 12;
+
+        test_cube.Top_Clockwise();
+        /*In this test, we need to make sure all of the faces
+        have the correct values*/
+
+        /*First we need to test that the 4 impacted sides*/
+        assert_eq!(test_cube.front.top_left, 4);
+        assert_eq!(test_cube.front.top_middle, 5);
+        assert_eq!(test_cube.front.top_right, 6);
+
+        assert_eq!(test_cube.right.top_left, 7);
+        assert_eq!(test_cube.right.top_middle, 8);
+        assert_eq!(test_cube.right.top_right, 9);
+
+        assert_eq!(test_cube.back.top_left, 10);
+        assert_eq!(test_cube.back.top_middle, 11);
+        assert_eq!(test_cube.back.top_right, 12);
+
+        assert_eq!(test_cube.left.top_left, 1);
+        assert_eq!(test_cube.left.top_middle, 2);
+        assert_eq!(test_cube.left.top_right, 3);
+    }
+
+    #[bench]
+    fn bench_top_clockwise_turn(bnchr: &mut Bencher){
+        let mut test_cube = Cube::New();
+        bnchr.iter(|| {
+            //Run 1 million loops
+            for i in 1..1000000 {
+                test_cube.Top_Clockwise()
             }
         });
     }
