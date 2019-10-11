@@ -137,7 +137,7 @@ impl Cube {
         Cube::Clockwise_Turn(&mut self.bottom)
     }
 
-    pub fn Face_Clockwise(&mut self){
+    pub fn Front_Clockwise(&mut self){
         //Swap front bottom with left bottom
         Cube::Swap_Unit_Colors(&mut self.left.top_right, &mut self.top.bot_right);
         Cube::Swap_Unit_Colors(&mut self.left.mid_right, &mut self.top.bot_middle);
@@ -285,7 +285,7 @@ mod Tests{
     }
 
     #[bench]
-    fn bench_counterclockwise_turn(bnchr: &mut Bencher){
+    fn bench_counterclockwise_turn_1m(bnchr: &mut Bencher){
         let mut test_cube = Cube::New();
         bnchr.iter(|| {
             //Run 1 million loops
@@ -326,7 +326,7 @@ mod Tests{
     }
 
     #[bench]
-    fn bench_clockwise_turn(bnchr: &mut Bencher){
+    fn bench_clockwise_turn_1m(bnchr: &mut Bencher){
         let mut test_cube = Cube::New();
         bnchr.iter(|| {
             //Run 1 million loops
@@ -380,7 +380,7 @@ mod Tests{
     }
 
     #[bench]
-    fn bench_top_clockwise_turn(bnchr: &mut Bencher){
+    fn bench_top_clockwise_turn_1m(bnchr: &mut Bencher){
         let mut test_cube = Cube::New();
         bnchr.iter(|| {
             //Run 1 million loops
@@ -434,7 +434,7 @@ mod Tests{
     }
 
     #[bench]
-    fn bench_left_counterclockwise(bnchr: &mut Bencher){
+    fn bench_left_counterclockwise_1m(bnchr: &mut Bencher){
         let mut test_cube = Cube::New();
         bnchr.iter(|| {
             //Run 1 million loops
@@ -488,7 +488,7 @@ mod Tests{
     }
 
     #[bench]
-    fn bench_right_clockwise(bnchr: &mut Bencher){
+    fn bench_right_clockwise_1m(bnchr: &mut Bencher){
         let mut test_cube = Cube::New();
         bnchr.iter(|| {
             //Run 1 million loops
@@ -542,7 +542,7 @@ mod Tests{
     }
 
     #[bench]
-    fn bench_bottom_clockwise(bnchr: &mut Bencher){
+    fn bench_bottom_clockwise_1m(bnchr: &mut Bencher){
         let mut test_cube = Cube::New();
         bnchr.iter(|| {
             //Run 1 million loops
@@ -573,7 +573,7 @@ mod Tests{
         test_cube.bottom.top_middle = 11;
         test_cube.bottom.top_right = 10;
 
-        test_cube.Face_Clockwise();
+        test_cube.Front_Clockwise();
         /*In this test, we need to make sure all of the faces
         have the correct values*/
 
@@ -596,12 +596,12 @@ mod Tests{
     }
 
     #[bench]
-    fn bench_front_clockwise(bnchr: &mut Bencher){
+    fn bench_front_clockwise_1m(bnchr: &mut Bencher){
         let mut test_cube = Cube::New();
         bnchr.iter(|| {
             //Run 1 million loops
             for i in 1..1000000 {
-                test_cube.Face_Clockwise();
+                test_cube.Front_Clockwise();
             }
         });
     }
@@ -650,12 +650,36 @@ mod Tests{
     }
 
     #[bench]
-    fn bench_back_clockwise(bnchr: &mut Bencher){
+    fn bench_back_clockwise_1m(bnchr: &mut Bencher){
         let mut test_cube = Cube::New();
         bnchr.iter(|| {
             //Run 1 million loops
             for i in 1..1000000 {
                 test_cube.Back_Clockwise();
+            }
+        });
+    }
+
+    #[bench]
+    fn bench_side_sorted_1m(bnchr: &mut Bencher){
+        let mut test_cube = Cube::New();
+        bnchr.iter(|| {
+            let n = test::black_box(&test_cube);
+            //Run 1 million loops
+            for i in 1..1000000 {
+                let sortVal = Cube::Is_Side_Sorted(&test_cube.front);
+            }
+        });
+    }
+
+    #[bench]
+    fn bench_unit_swap_100m(bnchr: &mut Bencher){
+        let mut test_cube = Cube::New();
+        bnchr.iter(|| {
+            let n = test::black_box(&test_cube);
+            //Run 1 million loops
+            for i in 1..100000000 {
+                let sortVal = Cube::Swap_Unit_Colors(&mut test_cube.front.top_right, &mut test_cube.back.top_left);
             }
         });
     }
