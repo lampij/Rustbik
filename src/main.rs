@@ -1,7 +1,28 @@
 #![feature(test)]
 
+extern crate termcolor;
+
+use std::io::Write;
+use termcolor::{StandardStream, ColorChoice, ColorSpec, Color, WriteColor};
+
+const BLUE : u8 = 0;
+const GREEN : u8 = 1;
+const RED : u8 = 2;
+const CYAN : u8 = 3;
+const MAGENTA : u8 = 4;
+const WHITE : u8 = 5;
+
 fn main() {
-    let _cube = Cube::new();
+    let mut _cube = Cube::new();
+    _cube = Cube::shuffle(_cube);
+
+    _cube.bottom_clockwise();
+    _cube.top_clockwise();
+    _cube.left_counterclockwise();
+    _cube.left_counterclockwise();
+    _cube.right_clockwise();
+
+    Cube::write_cube(&_cube);
 }
 
 pub struct Side {
@@ -51,6 +72,33 @@ impl Cube {
             left: Side::new(4),
             right: Side::new(5)
         }
+    }
+
+    pub fn write_cube(_c: &Cube){
+
+        println!();
+        println!("Front: {}", Cube::is_side_sorted(&_c.front));
+        Cube::write_cube_side(&_c.front);
+        println!();
+        println!("Top: {}", Cube::is_side_sorted(&_c.top));
+        Cube::write_cube_side(&_c.top);
+        println!();
+        println!("Back: {}", Cube::is_side_sorted(&_c.back));
+        Cube::write_cube_side(&_c.back);
+        println!();
+        println!("Bottom: {}", Cube::is_side_sorted(&_c.bottom));
+        Cube::write_cube_side(&_c.bottom);
+        println!();
+        println!("Left: {}", Cube::is_side_sorted(&_c.left));
+        Cube::write_cube_side(&_c.left);
+        println!();
+        println!("Right: {}", Cube::is_side_sorted(&_c.right));
+        Cube::write_cube_side(&_c.right);
+    }
+
+    pub fn shuffle(c : Cube) -> Cube {
+        //TODO: Implement Shuffle
+        return c;
     }
 
     /*Implementation Completed*/
@@ -208,9 +256,20 @@ impl Cube {
     }
 
     pub fn write_cube_side(target_side: &Side){
-        println!("{} {} {}", target_side.top_left, target_side.top_middle, target_side.top_right);
-        println!("{} {} {}", target_side.mid_left, target_side.mid_middle, target_side.mid_right);
-        println!("{} {} {}", target_side.bot_left, target_side.bot_middle, target_side.bot_right);
+
+        //Because of my unwillingness to implement the cube units in anything other than
+        //singular unsigned 8-bit integers, I have to write out each println.
+        Cube::write_single_unit(&target_side.top_left);
+        Cube::write_single_unit(&target_side.top_middle);
+        Cube::write_single_unit(&target_side.top_right);
+        println!();
+        Cube::write_single_unit(&target_side.mid_left);
+        Cube::write_single_unit(&target_side.mid_middle);
+        Cube::write_single_unit(&target_side.mid_right);
+        println!();
+        Cube::write_single_unit(&target_side.bot_left);
+        Cube::write_single_unit(&target_side.bot_middle);
+        Cube::write_single_unit(&target_side.bot_right);
         println!();
     }
 
@@ -230,15 +289,24 @@ impl Cube {
         *unit2 = *unit1 - *unit2;
         *unit1 = *unit1 - *unit2;
     }
-}
 
-pub enum Colors {
-    Red,
-    White,
-    Blue,
-    Green,
-    Orange,
-    Purple
+    pub fn write_single_unit(target_unit: &u8){
+        let mut stdout = StandardStream::stdout(ColorChoice::Always);
+
+        match *target_unit {
+            BLUE => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Blue))).unwrap(),
+            GREEN => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap(),
+            RED => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red))).unwrap(),
+            CYAN => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Cyan))).unwrap(),
+            MAGENTA => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Magenta))).unwrap(),
+            WHITE => stdout.set_color(ColorSpec::new().set_fg(Some(Color::White))).unwrap(),
+            _ => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Black))).unwrap(),
+        };
+
+        write!(&mut stdout, "██ ");
+        stdout.set_color(ColorSpec::new().set_fg(Some(Color::White))).unwrap()
+
+    }
 }
 
 /*
