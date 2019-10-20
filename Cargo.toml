@@ -1,5 +1,5 @@
 [package]
-name = "Rustbik"
+name = "rustbik"
 version = "0.1.0"
 authors = ["Lampij <ben.david.pinter@gmail.com>"]
 edition = "2018"
