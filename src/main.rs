@@ -4,24 +4,18 @@ extern crate termcolor;
 
 use std::io::Write;
 use termcolor::{StandardStream, ColorChoice, ColorSpec, Color, WriteColor};
+use rand::prelude::*;
 
 const BLUE : u8 = 0;
 const GREEN : u8 = 1;
 const RED : u8 = 2;
 const CYAN : u8 = 3;
 const MAGENTA : u8 = 4;
-const WHITE : u8 = 5;
+const YELLOW : u8 = 5;
 
 fn main() {
     let mut _cube = Cube::new();
-    _cube = Cube::shuffle(_cube);
-
-    _cube.bottom_clockwise();
-    _cube.top_clockwise();
-    _cube.left_counterclockwise();
-    _cube.left_counterclockwise();
-    _cube.right_clockwise();
-
+    let _cube = Cube::shuffle(_cube);
     Cube::write_cube(&_cube);
 }
 
@@ -96,8 +90,22 @@ impl Cube {
         Cube::write_cube_side(&_c.right);
     }
 
-    pub fn shuffle(c : Cube) -> Cube {
+    pub fn shuffle(mut c : Cube) -> Cube {
         //TODO: Implement Shuffle
+        let mut rng = thread_rng();
+        let x = rng.gen_range(150, 300);
+        for iters in 0..x {
+            let y = rng.gen_range(0, 5);
+            match y {
+                0 => c.front_clockwise(),
+                1 => c.left_counterclockwise(),
+                2 => c.right_clockwise(),
+                3 => c.top_clockwise(),
+                4 => c.bottom_clockwise(),
+                5 => c.back_clockwise(),
+                _ => c.front_clockwise()
+            }
+        }
         return c;
     }
 
@@ -299,7 +307,7 @@ impl Cube {
             RED => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red))).unwrap(),
             CYAN => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Cyan))).unwrap(),
             MAGENTA => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Magenta))).unwrap(),
-            WHITE => stdout.set_color(ColorSpec::new().set_fg(Some(Color::White))).unwrap(),
+            YELLOW => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Yellow))).unwrap(),
             _ => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Black))).unwrap(),
         };
 
