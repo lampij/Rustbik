@@ -28,3 +28,11 @@ The feature list thus far;
 - [ ] Move out of console project and into library
 - [ ] Expose cube to command line to allow for solving by hand.
 - [ ] **Programmatically solve the cube**
+
+___
+
+# Solution Log #1
+Shuffling random moves didn't make it happen in any reasonable amount of time. It turns out that, given the insane
+total permutations of a rubiks cube (something like 43 quintillion), it wasn't good enough to solve over an 8 hour period.
+
+I need to turn to something smarter.... 

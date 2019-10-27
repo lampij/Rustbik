@@ -6,6 +6,7 @@ use std::io::Write;
 use termcolor::{StandardStream, ColorChoice, ColorSpec, Color, WriteColor};
 use rand::prelude::*;
 
+
 const BLUE : u8 = 0;
 const GREEN : u8 = 1;
 const RED : u8 = 2;
@@ -15,27 +16,36 @@ const YELLOW : u8 = 5;
 
 fn main() {
     let mut _cube = Cube::new();
-    let _cube = Cube::shuffle(_cube);
+    let mut _cube = Cube::shuffle(_cube);
+
+    println!("Beginning random cube solution...1 move per iteration");
+    while !Cube::is_cube_solved(&mut _cube) {
+        _cube = Cube::solve_random(_cube);
+        Cube::serialize_cube(&mut _cube);
+    }
+
+    println!("What on earth...we actually solved it!");
     Cube::write_cube(&_cube);
 }
 
+
 pub struct Side {
-    top_left : u8,
+    top_left: u8,
     top_middle: u8,
     top_right: u8,
     mid_left: u8,
     mid_middle: u8,
     mid_right: u8,
-    bot_left : u8,
+    bot_left: u8,
     bot_middle: u8,
     bot_right: u8
 }
 
 impl Side {
-    pub fn new(val: u8) -> Side{
-        Side{
-            top_left : val,
-            top_middle : val,
+    pub fn new(val: u8) -> Side {
+        Side {
+            top_left: val,
+            top_middle: val,
             top_right: val,
             mid_left: val,
             mid_middle: val,
@@ -68,8 +78,34 @@ impl Cube {
         }
     }
 
-    pub fn write_cube(_c: &Cube){
+    pub fn solve_random(mut c: Cube) -> Cube{
+        //TODO: Implement Shuffle
+        let mut rng = thread_rng();
+        let y = rng.gen_range(0, 5);
+        match y {
+            0 => c.front_clockwise(),
+            1 => c.left_counterclockwise(),
+            2 => c.right_clockwise(),
+            3 => c.top_clockwise(),
+            4 => c.bottom_clockwise(),
+            5 => c.back_clockwise(),
+            _ => c.front_clockwise()
+        }
+        return c;
+    }
 
+    pub fn serialize_cube(&mut self) {}
+
+    pub fn is_cube_solved(&mut self) -> bool{
+        return Cube::is_side_sorted(&self.front)
+        && Cube::is_side_sorted(&self.back)
+        && Cube::is_side_sorted(&self.left)
+        && Cube::is_side_sorted(&self.right)
+        && Cube::is_side_sorted(&self.top)
+        && Cube::is_side_sorted(&self.bottom)
+    }
+
+    pub fn write_cube(_c: &Cube) {
         println!();
         println!("Front: {}", Cube::is_side_sorted(&_c.front));
         Cube::write_cube_side(&_c.front);
@@ -90,11 +126,11 @@ impl Cube {
         Cube::write_cube_side(&_c.right);
     }
 
-    pub fn shuffle(mut c : Cube) -> Cube {
+    pub fn shuffle(mut c: Cube) -> Cube {
         //TODO: Implement Shuffle
         let mut rng = thread_rng();
         let x = rng.gen_range(150, 300);
-        for iters in 0..x {
+        for _iters in 0..x {
             let y = rng.gen_range(0, 5);
             match y {
                 0 => c.front_clockwise(),
@@ -110,7 +146,7 @@ impl Cube {
     }
 
     /*Implementation Completed*/
-    pub fn left_counterclockwise(&mut self){
+    pub fn left_counterclockwise(&mut self) {
         //Swap front left rows with top left rows
         Cube::swap_unit_colors(&mut self.front.top_left, &mut self.top.top_left);
         Cube::swap_unit_colors(&mut self.front.mid_left, &mut self.top.mid_left);
@@ -130,7 +166,7 @@ impl Cube {
         Cube::counterclockwise_turn(&mut self.left);
     }
 
-    pub fn right_clockwise(&mut self){
+    pub fn right_clockwise(&mut self) {
         //Swap front left rows with top left rows
         Cube::swap_unit_colors(&mut self.front.top_right, &mut self.top.top_right);
         Cube::swap_unit_colors(&mut self.front.mid_right, &mut self.top.mid_right);
@@ -150,19 +186,19 @@ impl Cube {
         Cube::clockwise_turn(&mut self.right);
     }
 
-    pub fn top_clockwise(&mut self){
+    pub fn top_clockwise(&mut self) {
         //Swap top row of front with the top row of the left
         Cube::swap_unit_colors(&mut self.front.top_left, &mut self.right.top_left);
         Cube::swap_unit_colors(&mut self.front.top_middle, &mut self.right.top_middle);
         Cube::swap_unit_colors(&mut self.front.top_right, &mut self.right.top_right);
 
         //Swap front top tows with the back top rows
-        Cube::swap_unit_colors(&mut self.right.top_left , &mut self.left.top_left);
+        Cube::swap_unit_colors(&mut self.right.top_left, &mut self.left.top_left);
         Cube::swap_unit_colors(&mut self.right.top_middle, &mut self.left.top_middle);
         Cube::swap_unit_colors(&mut self.right.top_right, &mut self.left.top_right);
 
         //Swap front top rows with the right top rows
-        Cube::swap_unit_colors(&mut self.right.top_left , &mut self.back.top_left);
+        Cube::swap_unit_colors(&mut self.right.top_left, &mut self.back.top_left);
         Cube::swap_unit_colors(&mut self.right.top_middle, &mut self.back.top_middle);
         Cube::swap_unit_colors(&mut self.right.top_right, &mut self.back.top_right);
 
@@ -170,19 +206,19 @@ impl Cube {
         Cube::clockwise_turn(&mut self.top);
     }
 
-    pub fn bottom_clockwise(&mut self){
+    pub fn bottom_clockwise(&mut self) {
         //Swap front bottom with left bottom
         Cube::swap_unit_colors(&mut self.front.bot_left, &mut self.right.bot_left);
         Cube::swap_unit_colors(&mut self.front.bot_middle, &mut self.right.bot_middle);
         Cube::swap_unit_colors(&mut self.front.bot_right, &mut self.right.bot_right);
 
         //Swap front top tows with the back top rows
-        Cube::swap_unit_colors(&mut self.front.bot_left , &mut self.back.bot_left);
+        Cube::swap_unit_colors(&mut self.front.bot_left, &mut self.back.bot_left);
         Cube::swap_unit_colors(&mut self.front.bot_middle, &mut self.back.bot_middle);
         Cube::swap_unit_colors(&mut self.front.bot_right, &mut self.back.bot_right);
 
         //Swap front top rows with the left top rows
-        Cube::swap_unit_colors(&mut self.front.bot_left , &mut self.left.bot_left);
+        Cube::swap_unit_colors(&mut self.front.bot_left, &mut self.left.bot_left);
         Cube::swap_unit_colors(&mut self.front.bot_middle, &mut self.left.bot_middle);
         Cube::swap_unit_colors(&mut self.front.bot_right, &mut self.left.bot_right);
 
@@ -190,45 +226,45 @@ impl Cube {
         Cube::clockwise_turn(&mut self.bottom)
     }
 
-    pub fn front_clockwise(&mut self){
+    pub fn front_clockwise(&mut self) {
         //Swap front bottom with left bottom
         Cube::swap_unit_colors(&mut self.left.top_right, &mut self.top.bot_right);
         Cube::swap_unit_colors(&mut self.left.mid_right, &mut self.top.bot_middle);
         Cube::swap_unit_colors(&mut self.left.bot_right, &mut self.top.bot_left);
 
         //Swap front top tows with the back top rows
-        Cube::swap_unit_colors(&mut self.left.top_right , &mut self.right.bot_left);
+        Cube::swap_unit_colors(&mut self.left.top_right, &mut self.right.bot_left);
         Cube::swap_unit_colors(&mut self.left.mid_right, &mut self.right.mid_left);
         Cube::swap_unit_colors(&mut self.left.bot_right, &mut self.right.top_left);
 
         //Swap front top rows with the left top rows
-        Cube::swap_unit_colors(&mut self.left.top_right , &mut self.bottom.top_left);
+        Cube::swap_unit_colors(&mut self.left.top_right, &mut self.bottom.top_left);
         Cube::swap_unit_colors(&mut self.left.mid_right, &mut self.bottom.top_middle);
         Cube::swap_unit_colors(&mut self.left.bot_right, &mut self.bottom.top_right);
 
         Cube::clockwise_turn(&mut self.front);
     }
 
-    pub fn back_clockwise(&mut self){
+    pub fn back_clockwise(&mut self) {
         //Swap front bottom with left bottom
         Cube::swap_unit_colors(&mut self.right.top_right, &mut self.top.top_left);
         Cube::swap_unit_colors(&mut self.right.mid_right, &mut self.top.top_middle);
         Cube::swap_unit_colors(&mut self.right.bot_right, &mut self.top.top_right);
 
         //Swap front top tows with the back top rows
-        Cube::swap_unit_colors(&mut self.right.top_right , &mut self.left.bot_left);
+        Cube::swap_unit_colors(&mut self.right.top_right, &mut self.left.bot_left);
         Cube::swap_unit_colors(&mut self.right.mid_right, &mut self.left.mid_left);
         Cube::swap_unit_colors(&mut self.right.bot_right, &mut self.left.top_left);
 
         //Swap front top rows with the left top rows
-        Cube::swap_unit_colors(&mut self.right.top_right , &mut self.bottom.bot_right);
+        Cube::swap_unit_colors(&mut self.right.top_right, &mut self.bottom.bot_right);
         Cube::swap_unit_colors(&mut self.right.mid_right, &mut self.bottom.bot_middle);
         Cube::swap_unit_colors(&mut self.right.bot_right, &mut self.bottom.bot_left);
 
         Cube::clockwise_turn(&mut self.back);
     }
 
-    pub fn center_upward_twist(&mut self){
+    pub fn center_upward_twist(&mut self) {
         //Swap front left rows with top left rows
         Cube::swap_unit_colors(&mut self.front.top_middle, &mut self.top.top_middle);
         Cube::swap_unit_colors(&mut self.front.mid_middle, &mut self.top.mid_middle);
@@ -245,7 +281,7 @@ impl Cube {
         Cube::swap_unit_colors(&mut self.front.bot_middle, &mut self.bottom.bot_middle);
     }
 
-    pub fn clockwise_turn(side : &mut Side){
+    pub fn clockwise_turn(side: &mut Side) {
         Cube::swap_unit_colors(&mut side.top_left, &mut side.bot_left);
         Cube::swap_unit_colors(&mut side.top_right, &mut side.bot_left);
         Cube::swap_unit_colors(&mut side.top_middle, &mut side.mid_left);
@@ -254,7 +290,7 @@ impl Cube {
         Cube::swap_unit_colors(&mut side.bot_left, &mut side.bot_right);
     }
 
-    pub fn counterclockwise_turn(side : &mut Side){
+    pub fn counterclockwise_turn(side: &mut Side) {
         Cube::swap_unit_colors(&mut side.top_left, &mut side.top_right);
         Cube::swap_unit_colors(&mut side.top_right, &mut side.bot_right);
         Cube::swap_unit_colors(&mut side.top_middle, &mut side.mid_right);
@@ -263,7 +299,7 @@ impl Cube {
         Cube::swap_unit_colors(&mut side.bot_left, &mut side.bot_right);
     }
 
-    pub fn write_cube_side(target_side: &Side){
+    pub fn write_cube_side(target_side: &Side) {
 
         //Because of my unwillingness to implement the cube units in anything other than
         //singular unsigned 8-bit integers, I have to write out each println.
@@ -281,15 +317,15 @@ impl Cube {
         println!();
     }
 
-    pub fn is_side_sorted(target_side: &Side) -> bool{
+    pub fn is_side_sorted(target_side: &Side) -> bool {
         return target_side.top_left == target_side.top_middle
-        && target_side.top_left == target_side.top_right
-        && target_side.top_left == target_side.mid_left
-        && target_side.top_left == target_side.mid_middle
-        && target_side.top_left == target_side.mid_right
-        && target_side.top_left == target_side.bot_left
-        && target_side.top_left == target_side.bot_middle
-        && target_side.top_left == target_side.bot_right
+            && target_side.top_left == target_side.top_right
+            && target_side.top_left == target_side.mid_left
+            && target_side.top_left == target_side.mid_middle
+            && target_side.top_left == target_side.mid_right
+            && target_side.top_left == target_side.bot_left
+            && target_side.top_left == target_side.bot_middle
+            && target_side.top_left == target_side.bot_right
     }
 
     pub fn swap_unit_colors(unit1: &mut u8, unit2: &mut u8) {
@@ -298,7 +334,7 @@ impl Cube {
         *unit1 = *unit1 - *unit2;
     }
 
-    pub fn write_single_unit(target_unit: &u8){
+    pub fn write_single_unit(target_unit: &u8) {
         let mut stdout = StandardStream::stdout(ColorChoice::Always);
 
         match *target_unit {
@@ -311,9 +347,8 @@ impl Cube {
             _ => stdout.set_color(ColorSpec::new().set_fg(Some(Color::Black))).unwrap(),
         };
 
-        write!(&mut stdout, "██ ");
+        write!(&mut stdout, "██ ").unwrap();
         stdout.set_color(ColorSpec::new().set_fg(Some(Color::White))).unwrap()
-
     }
 }
 
