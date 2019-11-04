@@ -18,12 +18,6 @@ fn main() {
     let mut _cube = Cube::new();
     let mut _cube = Cube::shuffle(_cube);
 
-    println!("Beginning random cube solution...1 move per iteration");
-    while !Cube::is_cube_solved(&mut _cube) {
-        _cube = Cube::solve_random(_cube);
-        Cube::serialize_cube(&mut _cube);
-    }
-
     println!("What on earth...we actually solved it!");
     Cube::write_cube(&_cube);
 }
@@ -94,35 +88,169 @@ impl Cube {
         return c;
     }
 
+    pub fn solve_best_simple_move(mut c: Cube) -> Cube{
+
+
+
+        return c;
+    }
+
     pub fn serialize_cube(&mut self) {}
 
-    pub fn is_cube_solved(&mut self) -> bool{
-        return Cube::is_side_sorted(&self.front)
-        && Cube::is_side_sorted(&self.back)
-        && Cube::is_side_sorted(&self.left)
-        && Cube::is_side_sorted(&self.right)
-        && Cube::is_side_sorted(&self.top)
-        && Cube::is_side_sorted(&self.bottom)
+    pub fn is_cube_solved(c: Cube) -> bool{
+        return Cube::is_side_sorted(&c.front)
+        && Cube::is_side_sorted(&c.back)
+        && Cube::is_side_sorted(&c.left)
+        && Cube::is_side_sorted(&c.right)
+        && Cube::is_side_sorted(&c.top)
+        && Cube::is_side_sorted(&c.bottom)
+    }
+
+    pub fn calculate_side_homogeny(side : &Side) -> f64{
+        let mut total : f64 = 0.00;
+
+        let mut total_blue = 0.00;
+        let mut total_green = 0.00;
+        let mut total_red = 0.00;
+        let mut total_cyan = 0.00;
+        let mut total_magenta = 0.00;
+        let mut total_yellow = 0.00;
+
+        match side.top_left {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        match side.top_middle {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        match side.top_right {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        match side.mid_left {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        match side.mid_middle {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        match side.mid_right {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        match side.bot_left {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        match side.bot_middle {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        match side.bot_right {
+            0 => total_blue += 1.00,
+            1 => total_green += 1.00,
+            2 => total_red += 1.00,
+            3 => total_cyan += 1.00,
+            4 => total_magenta += 1.00,
+            5 => total_yellow += 1.00,
+            _ => panic!("Error while calculating homogeny")
+        }
+
+        if total_blue == 0.00{
+            total_blue = 9.00;
+        }
+        if total_green == 0.00{
+            total_green = 9.00;
+        }
+        if total_red == 0.00{
+            total_red = 9.00;
+        }
+        if total_cyan == 0.00{
+            total_cyan = 9.00;
+        }
+        if total_magenta == 0.00{
+            total_magenta = 9.00;
+        }
+        if total_yellow == 0.00{
+            total_yellow = 9.00;
+        }
+
+        return (total_blue / 9.00f64)
+            * (total_green / 9.00f64)
+            * (total_red / 9.00f64)
+            * (total_cyan / 9.00f64)
+            * (total_magenta / 9.00f64)
+            * (total_yellow / 9.00f64);
     }
 
     pub fn write_cube(_c: &Cube) {
         println!();
-        println!("Front: {}", Cube::is_side_sorted(&_c.front));
+        println!("Front: %{:.5}", Cube::calculate_side_homogeny(&_c.front) * 100f64);
         Cube::write_cube_side(&_c.front);
         println!();
-        println!("Top: {}", Cube::is_side_sorted(&_c.top));
+        println!("Top: %{:.5}", Cube::calculate_side_homogeny(&_c.top)* 100f64);
         Cube::write_cube_side(&_c.top);
         println!();
-        println!("Back: {}", Cube::is_side_sorted(&_c.back));
+        println!("Back: %{:.5}", Cube::calculate_side_homogeny(&_c.back)* 100f64);
         Cube::write_cube_side(&_c.back);
         println!();
-        println!("Bottom: {}", Cube::is_side_sorted(&_c.bottom));
+        println!("Bottom: %{:.5}", Cube::calculate_side_homogeny(&_c.bottom)* 100f64);
         Cube::write_cube_side(&_c.bottom);
         println!();
-        println!("Left: {}", Cube::is_side_sorted(&_c.left));
+        println!("Left: %{:.5}", Cube::calculate_side_homogeny(&_c.left)* 100f64);
         Cube::write_cube_side(&_c.left);
         println!();
-        println!("Right: {}", Cube::is_side_sorted(&_c.right));
+        println!("Right: %{:.5}", Cube::calculate_side_homogeny(&_c.right)* 100f64);
         Cube::write_cube_side(&_c.right);
     }
 
@@ -146,7 +274,9 @@ impl Cube {
     }
 
     /*Implementation Completed*/
-    pub fn left_counterclockwise(&mut self) {
+    pub fn left_counterclockwise(&mut self){
+
+
         //Swap front left rows with top left rows
         Cube::swap_unit_colors(&mut self.front.top_left, &mut self.top.top_left);
         Cube::swap_unit_colors(&mut self.front.mid_left, &mut self.top.mid_left);

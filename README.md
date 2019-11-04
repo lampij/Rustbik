@@ -35,4 +35,11 @@ ___
 Shuffling random moves didn't make it happen in any reasonable amount of time. It turns out that, given the insane
 total permutations of a rubiks cube (something like 43 quintillion), it wasn't good enough to solve over an 8 hour period.
 
-I need to turn to something smarter.... 
+I need to turn to something smarter....
+
+___
+
+# Swapping everything to pure functions...
+
+I've taken some time to understand my design, and if I can be honest, I didn't really follow Rust's paradigms very well. As a systems level language, I really treated
+it like C#. I made functions that modified in-place. I want to refactor this entire code base so that it is comprised of 'pure functions'.
